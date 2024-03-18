@@ -1,0 +1,1056 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kullanıcı Bilgileri</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="{% static 'styles/genericButon.css' %}">
+    
+  <style>
+
+    .container {
+      display: flex; /* Use flexbox */
+    }
+
+    .box {
+      flex: 1;
+      border: 1px solid #ccc; /* Optional: Border for visualization */
+      box-sizing: border-box; /* Include border in the width */
+      padding: 20px; /* Optional: Add padding for spacing */
+    }
+
+    .box1 {
+      width: 150px;
+      border: 1px solid #ccc; /* Optional: Border for visualization */
+      box-sizing: border-box; /* Include border in the width */
+      padding: 20px; /* Optional: Add padding for spacing */
+    }
+
+    .buton {
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 16px;
+      text-align: center;
+      text-decoration: none;
+      outline: none;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    /* Normal Durum */
+    .butonTemel {
+      background-color: #3498db;
+      color: #ffffff;
+      border: 2px solid #3498db;
+    }
+
+    /* Hover Durumu */
+    .butonTemel:hover {
+      background-color: #2980b9;
+      border-color: #2980b9;
+    }
+
+    /*-------------------------------------------------------------------*/
+    
+    body {
+      background-color: rgb(255, 255, 255);
+      color: rgb(6, 6, 6);
+    }
+
+    #userInfo {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    #userName,
+    #userLastName {
+      margin: 0;
+    }
+
+    #userProfilFoto {
+      max-width: 256px;
+      max-height: 256px;
+      margin: 10px;
+    }
+
+    #menu {
+      text-align: center;
+      margin: 20px;
+    }
+
+    #menu ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    #menu li {
+      display: inline;
+      margin: 0 10px;
+    }
+
+    #menu a {
+      text-decoration: none;
+      color: rgb(21, 20, 20);
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    #mesajlar,
+    #ilerleme,
+    #egzersiz {
+      margin: 20px;
+      display: none;
+    }
+
+    #mesajYazButon {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    #gonderilenMesajListesi,
+    #alinanMesajListesi,
+    #ilerlemeListesi,
+    #egzersizListesi {
+      list-style-type: none;
+      padding: 0;
+      /*text-align: left;*/
+    }
+
+    iframe {
+      margin-top: 10px;
+    }
+
+    #messageForm {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  #messageForm label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  #messageForm input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+  }
+
+  #messageForm input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  #messageForm input[type="submit"]:hover {
+    background-color: #45a049;
+  }
+        
+        #bilgiGuncelleForm,
+        #ilerlemeGuncelleForm {
+            text-align: center;
+        }
+        
+        #bilgiupdateForm,
+        #updateUserInfoForm {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            margin: auto;
+        }
+        
+        #bilgiupdateForm,
+        #updateUserInfoForm label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            text-align: left;
+        }
+        
+        #bilgiupdateForm,
+        #updateUserInfoForm input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+        
+        #bilgiupdateForm,
+        #updateUserInfoForm input[type="submit"] {
+            background-color: #4caf50;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        #previewImage {
+            max-width: 256px;
+            max-height: 256px;
+            display: none;
+        }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="cikis" onclick="cikisYap()">Çıkış</div>
+
+  <script>
+    function cikisYap() {
+      var cikisurl = "{% url 'cikis' %}"
+      window.location.href = cikisurl
+    }
+  </script>
+
+  <div id="userInfo">
+    <h1 id="userName"></h1>
+    <h2 id="userLastName"></h2>
+    <img id="userProfilFoto" alt="Profil Fotoğrafı" style="max-width: 256px; max-height: 256px;">
+  </div>
+
+  <div id="menu">
+    <ul>
+      <li id="listeBilgi"><a href="#" onclick="bilgiler()">Bilgilerim</a></li>
+      <li id="listeEgzersiz"><a href="#" onclick="showContent('egzersiz')">Egzersiz Planlarım</a></li>
+      <li id="listeMesaj"><a href="#" onclick="showContent('mesajlar')">Mesaj</a></li>
+      <li id="listeIlerleme"><a href="#" onclick="ilerleme()">İlerleme</a></li>
+    </ul>
+  </div>
+  
+  <div id="bilgiler" style="display: none">
+
+    <h2 >Bilgiler</h2>
+
+    <div id="bilgilerSegment">
+
+    </div>
+    
+    <button id="kisiselGuncelleButon" class="buton butonTemel" onclick="bilgiGuncelleForm()" style="text-align: center">Kişisel Veri Güncelle</button>
+  
+    <div id="bilgiGuncelleForm" style="display: none;" >
+      <div style="text-align: center;">
+      <h2> Bilgilerini Güncelle </h2>
+      <form id="bilgiupdateForm" action="{% url 'danisman_kimlik_dogru' %}" method="post" 
+        onsubmit="return bilgiGuncelle()">
+        {% csrf_token %}
+        <!-- Güncelleme için input alanları ekle -->
+        <div style="text-align: left;">
+        <div>
+          <label for="ad">Ad:</label>
+          <input type="text" id="ad" name="ad" value="{{ user.ad }}">
+        </div>
+        
+        <div>
+          <label for="soyad">Soyad:</label>
+          <input type="text" id="soyad" name="soyad" value="{{ user.soyad }}">
+        </div>
+        
+        <div>
+          <label for="email">Email:</label>
+          <input type="text" id="email" name="email" value="{{ user.email }}">
+        </div>
+
+        <div>
+          <label>Cinsiyet:</label>
+          <div class="radio-group">
+              <input type="radio" id="erkekRG" name="cinsiyet" value="erkek">
+              <label for="erkekRG">Erkek</label>
+      
+              <input type="radio" id="kadinRG" name="cinsiyet" value="kadin">
+              <label for="kadinRG">Kadın</label>
+          </div>
+        </div>
+        <script>
+            if ("{{ user.cinsiyet }}" == "kadin") {
+                document.getElementById("kadinRG").checked = true;
+            } else {
+                document.getElementById("erkekRG").checked = true;
+            }
+        </script>
+    
+        <div>
+          <label for="dogum_tarihi">Doğum Tarihi:</label>
+          <input type="date" id="dogum_tarihi" name="dogum_tarihi" value="{{ user.dogum_tarihi }}">
+        </div>
+        
+        <div>
+          <label for="profilePhoto">Profil Fotoğrafı Yükle:</label>
+          <input type="file" id="profilePhoto" accept="image/*" onchange="handleFileSelect()">
+          <img id="previewImage" src="#" alt="Profil Fotoğrafı">
+        </div>
+
+        <div>
+          <label for="telefon">Telefon:</label>
+          <input type="text" id="telefon" name="telefon" value="{{ user.telefon }}">
+        </div>
+
+        <div>
+          <input type="submit" value="Güncelle" class="buton butonTemel">
+        </div>
+      </div>
+      </form>
+      </div>
+    </div>
+  
+  
+  
+  </div>
+
+  <div id="egzersiz" style="display: none">
+    <h2 id="egzersizBaslik">Egzersiz</h2>
+    <p id="egzersizIcerik"></p>
+    <p>Egzersizler</p>
+    <ul id="egzersizListesi"></ul>
+  </div>
+
+  <div id="mesajlar" style="display: none">
+
+    <h1>Mesajlar</h1>
+
+    <button id="mesajYazButon" class="buton butonTemel" onclick="openMessageForm()" style="text-align: center">Yeni Mesaj Yaz</button>
+    <div id="message" style="display: none">
+      <h2>Mesaj Yaz</h2>
+
+      <div id="mesajFormSegment" style="text-align: left">
+
+        <form id="messageForm" action="{% url 'danisman_kimlik_dogru' %}" method="post" onsubmit="return mesajGonder()" style="text-align: left">
+          {% csrf_token %}
+          <label for="messageText">Mesaj:</label>
+          <input type="text" id="messageText" name="messageText" style="width: 300px; height: 100px;">
+          <br>
+          <label for="messageAlici">Alıcı: </label>
+          <input type="text" id="messageAlici" name="messageAlici">
+          <br>
+          <input type="submit" class="buton butonTemel" value="Gönder">
+        </form>
+      </div>
+    </div>
+    
+    <h2>Gönderilen Mesajlar</h2>
+    <ul id="gonderilenMesajListesi"></ul>
+
+    <h2>Alınan Mesajlar</h2>
+    <ul id="alinanMesajListesi"></ul>
+
+  </div>
+
+  <div id="ilerleme" style="display: none">
+
+    
+
+    <h2 id="ilerlemeBaslik">İlerleme</h2>
+
+    <div id="ilerlemeSegment">
+      
+    </div>
+
+    <button id="ilerlemeGuncelleButon" class="buton butonTemel" onclick="ilerlemeGuncelleForm()" style="text-align: center">İlerleme Güncelle</button>
+
+    <div id="ilerlemeGuncelleForm" style="display: none">
+      <h2>Bilgilerini Güncelle</h2>
+      <form id="updateUserInfoForm" action="{% url 'danisman_kimlik_dogru' %}" method="post"
+        onsubmit="return showFailurePopup()">
+        {% csrf_token %}
+        <div>
+            <label for="kilo">Kilo:</label>
+            <input type="text" id="kilo" name="kilo" value="{{ user.kilo }}">
+        </div>
+        
+        <div>
+            <label for="boy">Boy:</label>
+            <input type="text" id="boy" name="boy" value="{{ user.boy }}">
+        </div>
+        
+        <div>
+            <label for="vucut_yag_orani">Vücut Yağ Oranı:</label>
+            <input type="text" id="vucut_yag_orani" name="vucut_yag_orani" value="{{ user.vucut_yag_orani }}">
+        </div>
+        
+        <div>
+            <label for="kas_kutlesi">Kas Kütlesi:</label>
+            <input type="text" id="kas_kutlesi" name="kas_kutlesi" value="{{ user.kas_kutlesi }}">
+        </div>
+        
+        <div>
+            <label for="vucut_kitle_indeksi">Vücut Kitle İndeksi:</label>
+            <input type="text" id="vucut_kitle_indeksi" name="vucut_kitle_indeksi" value="{{ user.vucut_kitle_indeksi }}">
+        </div>
+        
+        <div>
+            <input type="submit" value="Güncelle" class="buton butonTemel">
+        </div>
+      </form>
+    </div>
+
+    <div id="gecmisIlerlemeDiv">
+      <p style="text-align: center;">Geçmiş İlerleme</p>
+      <canvas id="kiloGrafik" width="400" height="200" style="text-align: center;"></canvas>
+      <ul id="ilerlemeListesi" >
+      </ul>
+    </div>
+  </div>
+
+<script>
+
+    function padWithLeadingZeros(num, totalLength) {
+      return String(num).padStart(totalLength, '0');
+    }
+    function formatDate(date) {
+      return String(date.getHours() + ":" + date.getMinutes() + " " + date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear())
+    }
+
+    function toggleByID(id) {
+
+      part = document.getElementById(id)
+
+      if (part.style.display == "none") {
+        part.style.display = "block"
+      }
+      else {
+        part.style.display = "none"
+      }
+
+    }
+
+    function showContent(id) {
+      toggleByID(id);
+    }
+
+</script>
+
+
+  <script>
+    // Bu bölümde kullanıcı bilgilerini MongoDB'den almak ve sayfaya entegre etmek için backend kodlarına ihtiyaç vardır.
+    // Bu örnek sadece frontend tarafını göstermektedir.
+    var user = {
+      ad: "{{ user.ad }}",
+      soyad: "{{ user.soyad }}",
+      dogum_tarihi: "{{ user.dogum_tarihi }}",
+      cinsiyet: "{{ user.cinsiyet }}",
+      email: "{{ user.email }}",
+      telefon: "{{ user.telefon }}",
+      profilFoto: "{{ user.profil_foto }}",
+      kilo: "{{ user.kilo }}",
+      boy: "{{ user.boy }}",
+      vucut_yag_orani: "{{ user.vucut_yag_orani }}",
+      kas_kutlesi: "{{ user.kas_kutlesi }}",
+      vucut_kitle_indeksi: "{{ user.vucut_kitle_indeksi }}",
+    };
+
+    // Kullanıcının adını ve soyadını görüntüle
+    document.getElementById("userName").innerText = user.ad;
+    document.getElementById("userLastName").innerText = user.soyad;
+    document.getElementById("userProfilFoto").src=user.profilFoto;
+
+    // İçeriği göster
+    
+
+    function ilerleme() {
+      showContent("ilerleme")
+      /*var infoText = "Kilo: " + user.kilo + "\n"
+        + "Boy: " + user.boy + "\n"
+        + "Vücut Yağ Oranı: " + user.vucut_yag_orani + "\n"
+        + "Kas Kütlesi: " + user.kas_kutlesi + "\n"
+        + "Vücut Kitle İndeksi: " + user.vucut_kitle_indeksi + "\n";
+
+      document.getElementById("ilerlemeIcerik").innerText = infoText;*/
+      
+
+      var ilerlemeSegment = document.getElementById("ilerlemeSegment")
+
+      ilerlemeSegment.innerHTML = `
+                        <div class="container">
+                          <div id="ff" class="box1">Kilo:</div>
+                          <div class="box">${user.kilo}</div>
+                        </div>
+                        <br>
+                        <div class="container">
+                          <div id="ff" class="box1">Boy:</div>
+                          <div class="box">${user.boy}</div>
+                        </div>
+                        <br>
+                        <div class="container">
+                          <div id="ff" class="box1">Vücut Yağ Oranı:</div>
+                          <div class="box">${user.vucut_yag_orani}</div>
+                        </div>
+                        <br>
+                        <div class="container">
+                          <div id="ff" class="box1">Kas Kütlesi:</div>
+                          <div class="box">${user.kas_kutlesi}</div>
+                        </div>
+                        <br>
+                        <div class="container">
+                          <div id="ff" class="box1">Vücut Kitle İndeksi:</div>
+                          <div class="box">${user.vucut_kitle_indeksi}</div>
+                        </div>
+                        <br>
+                        `;
+    }
+
+    function bilgiler() {
+      showContent('bilgiler')
+
+      var bilgiSegment = document.getElementById("bilgilerSegment")
+
+      bilgiSegment.innerHTML = `
+                          <div class="container">
+                              <div id="ff" class="box1">Ad:</div>
+                              <div class="box">${user.ad}</div>
+                          </div>
+                          <br>
+                          <div class="container">
+                              <div id="ff" class="box1">Soyad:</div>
+                              <div class="box">${user.soyad}</div>
+                          </div>
+                          <br>
+                          <div class="container">
+                              <div id="ff" class="box1">Doğum Tarihi:</div>
+                              <div class="box">${user.dogum_tarihi}</div>
+                          </div>
+                          <br>
+                          <div class="container">
+                              <div id="ff" class="box1">Cinsiyet:</div>
+                              <div class="box">${user.cinsiyet}</div>
+                          </div>
+                          <br>
+                          <div class="container">
+                              <div id="ff" class="box1">Email:</div>
+                              <div class="box">${user.email}</div>
+                          </div>
+                          <br>
+                          <div class="container">
+                              <div id="ff" class="box1">Telefon:</div>
+                              <div class="box">${user.telefon}</div>
+                          </div>
+                          <br>
+                        `;
+    
+    }
+
+    function ilerlemeGuncelleForm() {
+      showContent("ilerlemeGuncelleForm")
+    }
+
+    function bilgiGuncelleForm() {
+      showContent("bilgiGuncelleForm")
+    }
+
+    
+
+  </script>
+
+  <script>
+
+    function showFailurePopup() {
+      var kiloInput = document.getElementById("kilo");
+      var boyInput = document.getElementById("boy");
+      var vucutYagOraniInput = document.getElementById("vucut_yag_orani");
+      var kasKutlesiInput = document.getElementById("kas_kutlesi");
+      var vucutKitleIndeksiInput = document.getElementById("vucut_kitle_indeksi");
+
+      user.kilo = kiloInput.value,
+      user.boy = boyInput.value,
+      user.vucut_yag_orani = vucutYagOraniInput.value,
+      user.kas_kutlesi = kasKutlesiInput.value,
+      user.vucut_kitle_indeksi = vucutKitleIndeksiInput.value,
+    
+      // AJAX ile Django view fonksiyonunu çağır
+      fetch('{% url "danisman_kimlik_dogru" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}',
+        },
+        body: JSON.stringify({
+          ad: "{{ user.ad }}",
+          soyad: "{{ user.soyad }}",
+          dogum_tarihi: "{{ user.dogum_tarihi }}",
+          cinsiyet: "{{ user.cinsiyet }}",
+          email: "{{ user.email }}",
+          telefon: "{{ user.telefon }}",
+          profilFoto: "{{ user.profil_foto }}",
+          kilo: user.kilo,
+          boy: user.boy,
+          vucut_yag_orani: user.vucut_yag_orani,
+          kas_kutlesi: user.kas_kutlesi,
+          vucut_kitle_indeksi: user.vucut_kitle_indeksi,
+        })
+      })
+
+      return false; // Formun normal submit işlemini engelle
+    }
+  </script>
+
+
+  <script>
+
+
+function bilgiGuncelle() {
+      var adInput = document.getElementById("ad");
+      var soyadInput = document.getElementById("soyad");
+      var dogumInput = document.getElementById("dogum_tarihi");
+      var cinsiyetInput = document.querySelector('input[name="cinsiyet"]:checked');
+      var emailInput = document.getElementById("email");
+      var telefonInput = document.getElementById("telefon");
+      var profilePhotoInput = document.getElementById('profilePhoto');
+      var selectedFile = profilePhotoInput.files[0];
+
+      var bodySent = {
+        ad: adInput.value,
+        soyad: soyadInput.value,
+        dogum_tarihi: dogumInput.value,
+        cinsiyet: cinsiyetInput.value,
+        email: emailInput.value,
+        telefon: telefonInput.value,
+        profil_foto: "{{ user.profil_foto }}"
+      }
+
+      user.ad= adInput.value;
+      user.soyad= soyadInput.value;
+      user.dogum_tarihi= dogumInput.value;
+      user.cinsiyet= cinsiyetInput.value;
+      user.email= emailInput.value;
+      user.telefon= telefonInput.value;
+      user.profil_foto= "{{ user.profil_foto }}";
+      
+
+      if (selectedFile) {
+        convertToBase64(selectedFile, function (base64Image) {
+          // Kullanıcı nesnesini base64 görüntü ile güncelle
+          bodySent.profil_foto = base64Image;
+          user.profilFoto = base64Image;
+          // Sayfadaki profil fotoğrafını güncelle
+          var previewImage = document.getElementById('previewImage');
+          previewImage.src = base64Image;
+          previewImage.style.display = 'block';
+            
+              
+          // Güncellenen kullanıcı verilerini MongoDB'ye kaydet (bunun için bir backend endpoint'e ihtiyacınız vardır)
+          saveUserDataToMongoDB(bodySent);
+            
+
+            // Sayfayı yeniden yükle
+          location.reload();
+        });
+    
+      }
+
+      else {
+        saveWithoutProfilePic(bodySent);
+      }
+
+
+      /*// AJAX ile Django view fonksiyonunu çağır
+      fetch('{% url "bilgiGuncelle" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}',
+        },
+        body: JSON.stringify({
+          ad: adInput.value,
+          soyad: soyadInput.value,
+          dogum_tarihi: dogumInput.value,
+          cinsiyet: cinsiyetInput.value,
+          email: emailInput.value,
+          telefon: telefonInput.value,
+          profilFoto: user.profilFoto,
+          kilo: "{{ user.kilo }}",
+          boy: "{{ user.boy }}",
+          vucut_yag_orani: "{{ user.vucut_yag_orani }}",
+          kas_kutlesi: "{{ user.kas_kutlesi }}",
+          vucut_kitle_indeksi: "{{ user.vucut_kitle_indeksi }}",
+        })
+      })
+
+*/
+      return false; // Formun normal submit işlemini engelle
+    }
+
+    function convertToBase64(file, callback) {
+      var reader = new FileReader();
+      reader.onloadend = function () {
+        callback(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+
+// Güncellenen kullanıcı verilerini MongoDB'ye kaydet (bunun için bir backend endpoint'e ihtiyacınız vardır)
+    function saveUserDataToMongoDB(user) {
+      fetch('{% url "bilgiGuncelle" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}',
+        },
+        body: JSON.stringify({
+          ad: user.ad,
+          soyad: user.soyad,
+          dogum_tarihi: user.dogum_tarihi,
+          cinsiyet: user.cinsiyet,
+          email: user.email,
+          telefon: user.telefon,
+          profil_foto: user.profil_foto
+        }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Gerekirse yanıtı ele al
+      })
+      .catch(error => console.error('Kullanıcı verileri güncellenirken hata oluştu:', error));
+    }
+
+    function saveWithoutProfilePic(user) {
+        
+      fetch('{% url "bilgiGuncelle" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}',
+        },
+        body: JSON.stringify({
+          ad: user.ad,
+          soyad: user.soyad,
+          dogum_tarihi: user.dogum_tarihi,
+          cinsiyet: user.cinsiyet,
+          email: user.email,
+          telefon: user.telefon,
+          profil_foto: '{{ user.profil_foto }}'
+        }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Gerekirse yanıtı ele al
+      })
+      .catch(error => console.error('Kullanıcı verileri güncellenirken hata oluştu:', error));
+    }
+
+  </script>
+
+  <script>
+
+    function openMessageForm() {
+      toggleByID("message")
+    }
+
+
+    function mesajGonder() {
+      var mesajInput = document.getElementById("messageText");
+      var mesajAliciInput = document.getElementById("messageAlici");
+
+
+      fetch('{% url "mesajYaz" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}',
+        },
+        body: JSON.stringify({
+          mesajText: mesajInput.value,
+          mesajAlici: mesajAliciInput.value
+        })
+      })
+
+      return false;
+    }
+
+    function mesajResetClick() {
+      document.getElementById('listeMesaj').addEventListener('click', mesajAl);
+      document.getElementById('listeMesaj').removeEventListener('click', mesajResetClick)
+    }
+
+
+    function mesajAl() {
+      // AJAX ile Django view fonksiyonunu çağır
+
+        
+      document.getElementById('listeMesaj').removeEventListener('click', mesajAl)
+      document.getElementById('listeMesaj').addEventListener('click', mesajResetClick);
+
+      fetch('{% url "mesajAl" %}')  // /get_people/ endpoint'inizi uygun şekilde güncelleyin
+        .then(response => response.json())
+        .then(data => {
+          // Verileri alındıktan sonra HTML'e ekle
+          var gonderilenMesajListesi = document.getElementById('gonderilenMesajListesi');
+          var alinanMesajListesi = document.getElementById('alinanMesajListesi');
+          gonderilenMesajListesi.innerHTML = '';  // Mevcut içeriği temizle
+          alinanMesajListesi.innerHTML = '';  // Mevcut içeriği temizle
+
+          veri = JSON.stringify(data)
+          veri = JSON.parse(veri)
+          veri = JSON.parse(veri)
+
+          const alinanMesajlar = veri.alinanMesajlar
+          const gonderilenMesajlar = veri.gonderilenMesajlar
+
+
+          alinanMesajlar.forEach(mesaj => {
+            var listItem = document.createElement('li');
+
+            var tarih = new Date(mesaj.tarih)
+            tarih = formatDate(tarih)
+
+            listItem.innerHTML = `
+                        <div class="container">
+                          <div class="box">Gönderen: ${mesaj.gondericiAdi} ${mesaj.gondericiSoyadi}</div>
+                          <div class="box">${mesaj.gonderici}</div>
+                          <div class="box">Mesaj: ${mesaj.mesaj}</div>
+                          <div class="box">Tarih: ${tarih}</div>
+                          <br>
+                        </div>
+                        `;
+            alinanMesajListesi.appendChild(listItem);
+          });
+          gonderilenMesajlar.forEach(mesaj => {
+            var listItem = document.createElement('li');
+
+            var tarih = new Date(mesaj.tarih)
+            tarih = formatDate(tarih)
+            listItem.innerHTML = `
+                        <div class="container">
+                          <div class="box">Alıcı:${mesaj.alici}</div>
+                          <div class="box">Mesaj: ${mesaj.mesaj}</div>
+                          <div class="box">Tarih: ${tarih}</div>
+                          <br>
+                        </div>
+                        `;
+
+            gonderilenMesajListesi.appendChild(listItem);
+          });
+        })
+        .catch(error => console.error('Veri alınamadı:', error));
+
+
+    }
+
+
+
+    document.getElementById('listeMesaj').addEventListener('click', mesajAl);
+  </script>
+
+<script>
+
+  function ilerlemeResetClick() {   
+    document.getElementById("listeIlerleme").addEventListener('click', gecmisVeriAl);
+    
+    document.getElementById("listeIlerleme").removeEventListener('click', ilerlemeResetClick);
+  }
+
+  function gecmisVeriAl() {
+    document.getElementById("listeIlerleme").removeEventListener('click', gecmisVeriAl);
+    document.getElementById("listeIlerleme").addEventListener('click', ilerlemeResetClick);
+
+    // AJAX ile Django view fonksiyonunu çağır
+
+    fetch('{% url "gecmisVeriAl" %}')  // /get_people/ endpoint'inizi uygun şekilde güncelleyin
+      .then(response => response.json())
+      .then(data => {
+        // Verileri alındıktan sonra HTML'e ekle
+        var gecmisVeriListesi = document.getElementById('ilerlemeListesi');
+        gecmisVeriListesi.innerHTML = '';  // Mevcut içeriği temizle
+
+        veri = JSON.stringify(data)
+        veri = JSON.parse(veri)
+        veri = JSON.parse(veri)
+        
+        const gecmisVeri = veri
+
+
+        kiloVeri = []
+        tarihVeri = []
+        boyVeri = []
+        kitleIndeksiVeri = []
+        yagOraniVeri = []
+        kasKutlesiVeri = []
+        
+
+
+        gecmisVeri.forEach(veri1 => {
+          var listItem = document.createElement('li');
+          var tarih = new Date(veri1.tarih)
+          tarih = formatDate(tarih)
+          
+          kiloVeri.push(veri1.kilo)
+          boyVeri.push(veri1.boy)
+          kitleIndeksiVeri.push(veri1.vucut_kitle_indeksi)
+          yagOraniVeri.push(veri1.vucut_yag_orani)
+          kasKutlesiVeri.push(veri1.kas_kutlesi)
+          
+          tarihVeri.push(tarih)
+
+          listItem.innerHTML = `
+                      <div>
+                        <p>Kilo:${veri1.kilo}
+                           Boy: ${veri1.boy}
+                           Vücut Kitle İndeksi: ${veri1.vucut_kitle_indeksi}
+                           Vücut Yağ Oranı: ${veri1.vucut_yag_orani}
+                           Kas Kütlesi: ${veri1.kas_kutlesi}
+                           Tarih: ${tarih}</p>
+                      </div>
+                      `;
+          gecmisVeriListesi.appendChild(listItem);
+        });
+        
+        updateLineChart("kiloGrafik", tarihVeri, kiloVeri, boyVeri, kitleIndeksiVeri, yagOraniVeri, kasKutlesiVeri)
+      })
+      .catch(error => console.error('Veri alınamadı:', error));
+    }
+
+      function updateLineChart(id, tarihListesi, kiloListesi, boyListesi, vucutKitleIndeksListesi, vucutYagOranListesi, kasKutlesiListesi) {
+        // Çizgi grafiği için canvas elementini seç
+        var ctx = document.getElementById(id).getContext('2d');
+
+        // Çizgi grafiği oluştur
+        var myChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: kiloListesi.map((_, index) => tarihListesi[index]), // Etiketleri güncelle
+            datasets: [{
+              label: 'Kilo',
+              data: kiloListesi,
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1,
+              fill: false,
+            },
+            {
+              label: 'Boy',
+              data: boyListesi,
+              borderColor: 'rgba(0, 0, 0, 1)',
+              borderWidth: 1,
+              fill: false,
+            },
+
+            {
+              label: 'Vücut Kitle İndeksi',
+              data: vucutKitleIndeksListesi,
+              borderColor: 'rgba(31, 31, 180, 1)',
+              borderWidth: 1,
+              fill: false,
+            },
+
+            {
+              label: 'Vücut Yağ Oranı',
+              data: vucutYagOranListesi,
+              borderColor: 'rgba(180, 31, 31, 1)',
+              borderWidth: 1,
+              fill: false,
+            },
+
+            {
+              label: 'Kas Kütlesi',
+              data: kasKutlesiListesi,
+              borderColor: 'rgba(31, 180, 31, 1)',
+              borderWidth: 1,
+              fill: false,
+            }
+          
+          ]
+          },
+          options: {
+          scales: {
+            y: {
+              beginAtZero: true // Y eksenini 0'dan başlat
+            }
+          }
+        }
+        });
+      }
+
+  document.getElementById('listeIlerleme').addEventListener('click', gecmisVeriAl);
+</script>
+
+<script>
+
+  function egzersizResetClick() {
+    document.getElementById('listeEgzersiz').addEventListener('click', egzersizAl);
+    document.getElementById('listeEgzersiz').removeEventListener('click', egzersizResetClick);
+  }
+  
+  function egzersizAl() {
+
+      
+    document.getElementById('listeEgzersiz').removeEventListener('click', egzersizAl);
+    document.getElementById('listeEgzersiz').addEventListener('click', egzersizResetClick);
+
+    fetch('{% url "egzersizAl" %}')  // /get_people/ endpoint'inizi uygun şekilde güncelleyin
+      .then(response => response.json())
+      .then(data => {
+        // Verileri alındıktan sonra HTML'e ekle
+        var egzersizListesi = document.getElementById('egzersizListesi');
+        egzersizListesi.innerHTML = '';  // Mevcut içeriği temizle
+
+        veri = JSON.stringify(data)
+        veri = JSON.parse(veri)
+        veri = JSON.parse(veri)
+        
+        var egzersizVeri = veri
+
+
+        var index = 0;
+        egzersizVeri.forEach(egzersiz => {
+          var listItem = document.createElement('li');
+
+          var tarih = new Date(egzersiz.tarih)
+          tarih = formatDate(tarih)
+
+          listItem.innerHTML = `
+                      <div class='container'>
+                        <div class='box'>
+                          <div class="container">
+                            <div id="ff" class="box1">Egzersiz Adı:</div>
+                            <div class="box">${egzersiz.egzersiz_adi}</div>
+                          </div>
+                          <br>
+                          <div class="container">
+                            <div id="ff" class="box1">Hedef:</div>
+                            <div class="box">${egzersiz.hedef}</div>
+                          </div>
+                          <br>
+                          <div class="container">
+                            <div id="ff" class="box1">Tekrar:</div>
+                            <div class="box">${egzersiz.tekrar}</div>
+                          </div>
+                          <br>
+                          <div class="container">
+                            <div id="ff" class="box1">Süre:</div>
+                            <div class="box">${egzersiz.sure}</div>
+                          </div>
+                          <br>
+                          <div class="container">
+                            <div id="ff" class="box1">Tarih:</div>
+                            <div class="box">${tarih}</div>
+                          </div>
+                          <br>
+                        </div>
+                        <div class="box">
+                          <iframe id=${egzersiz.email + String(index++)} width="560" height="315" src="https://www.youtube.com/embed/${egzersiz.video}" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                        
+                      </div>
+                      `;
+            egzersizListesi.appendChild(listItem);
+        });
+ 
+      })
+      .catch(error => console.error('Veri alınamadı:', error));
+    }
+
+    
+  document.getElementById('listeEgzersiz').addEventListener('click', egzersizAl);
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Paneli</title>
+    <style>
+        .user-card {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px;
+            width: 200px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Admin Paneli</h1>
+
+
+<h2>Kullanıcılar</h2>
+{% for user in user %}
+    <div class="user-card">
+        <h2>{{ user.ad }}</h2>
+        <p>Email: {{ user.email }}</p>
+        <p>soyad: {{ user.soyad }}</p>
+        <button class="button" onclick="danisman_yolla()">Giris</button>
+    </div>
+{% endfor %}
+
+<h2>Yeni Kullanıcı Oluştur</h2>
+<form method="post" action="{% url 'danisman_ekle' %}">
+    {% csrf_token %}
+    <label for="ad">Ad:</label>
+    <input type="text" name="ad" required>
+    <label for="soyad">Soyad:</label>
+    <input type="text" name="soyad" required>
+    <label for="email">Email:</label>
+    <input type="email" name="email" required>
+    <label for="sifre">sifre:</label>
+    <input type="sifre" name="sifre" required>
+    <label for="telefon">telefon:</label>
+    <input type="telefon" name="telefon" required>
+    <label for="dogumTarihi">dogumTarihi:</label>
+    <input type="dogumTarihi" name="dogumTarihi" required>
+    <label for="cinsiyet">cinsiyet:</label>
+    <input type="cinsiyet" name="cinsiyet" required>
+    <input type="submit" value="Oluştur">
+</form>
+
+<h2>Koçlar</h2>
+{% for user in coach %}
+    <div class="user-card">
+        <h2>{{ user.ad }}</h2>
+        <p>Email: {{ user.email }}</p>
+        <p>soyad: {{ user.soyad }}</p>
+        <button class="button" onclick="koc_yolla()">Giris</button>
+    </div>
+{% endfor %}
+
+
+<h2>Yeni Koç Oluştur</h2>
+<form method="post" action="{% url 'koc_ekle' %}">
+    {% csrf_token %}
+    <label for="ad">Ad:</label>
+    <input type="text" name="ad" required>
+    <label for="soyad">Soyad:</label>
+    <input type="text" name="soyad" required>
+    <label for="email">Email:</label>
+    <input type="email" name="email" required>
+    <label for="sifre">sifre:</label>
+    <input type="sifre" name="sifre" required>
+    <label for="telefon">telefon:</label>
+    <input type="telefon" name="telefon" required>
+    <label for="dogumTarihi">dogumTarihi:</label>
+    <input type="dogumTarihi" name="dogumTarihi" required>
+    <label for="cinsiyet">cinsiyet:</label>
+    <input type="cinsiyet" name="cinsiyet" required>
+    <label for="deneyim">deneyim:</label>
+    <input type="deneyim" name="deneyim" required>
+    <label for="uzmanlik_alani">uzmanlik_alani:</label>
+    <input type="uzmanlik_alani" name="uzmanlik_alani" required>
+    <input type="submit" value="Oluştur">
+    
+</form>
+<script> 
+    function danisman_yolla() {
+        var url = "{% url 'danisman_giris' %}"
+        console.log(url)
+        window.location.href = url; // Giriş sayfasına yönlendir
+    }
+
+
+</script>
+<script> 
+    function koc_yolla() {
+        var url = "{% url 'antrenor' %}"
+        console.log(url)
+        window.location.href = url; // Giriş sayfasına yönlendir
+    }
+
+
+</script>
+</body>
+</html>

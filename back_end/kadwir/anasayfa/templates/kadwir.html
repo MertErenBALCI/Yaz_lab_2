@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="">
+  <title>Role Sayfası</title>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      /* Arka plan resmi ekleyin */
+      background: url("{% static 'img/zenci.jpg' %}") center/cover no-repeat;
+    }
+
+    #roleButtons {
+      text-align: center;
+    }
+
+    .roleButton {
+      display: inline-block;
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: rgb(52, 73, 94);
+      color: black;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+
+    .roleButton:hover {
+      background-color: rgb(41, 128, 185);
+    }
+
+    /* Müzik çaları gizle */
+    #audioPlayer {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Müzik Çalar -->
+  <audio id="audioPlayer" controls>
+    <source src="{% static 'img/legend.mp3' %}" type="audio/mp3">
+    Tarayıcınız audio elementini desteklemiyor.
+  </audio>
+
+
+  <div id="roleButtons">
+    <button class="roleButton" onclick="goToPage('admin')">Admin</button>
+    <button class="roleButton" onclick="goToPage('antrenor')">Antrenör</button>
+    <button class="roleButton"  onclick="goToPage('danisman')">Danışman</button>
+  </div>
+
+  <script>
+
+    setTimeout(function() {
+        audio = document.getElementById("audioPlayer");
+        audio.play();
+        audio.loop = true;
+    }, 2000);
+
+    function goToPage(role) {
+      let pageUrl = '';
+
+      switch (role) {
+        case 'admin':
+          pageUrl = "{% url 'yonetici' %}";
+          break;
+        case 'antrenor':
+          pageUrl = "{% url 'antrenor' %}";
+          break;
+        case 'danisman':
+          pageUrl = "{% url 'danisman' %}";
+          break;
+        default:
+          pageUrl = 'index.html';
+          break;
+      }
+
+      window.location.href = pageUrl;
+    }
+  </script>
+
+</body>
+</html>

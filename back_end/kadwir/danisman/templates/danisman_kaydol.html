@@ -1,0 +1,101 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kayıt Formu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: url("{% static 'img/danisman_kaydol.jpg' %}") center/cover no-repeat;
+        }
+
+        form {
+            width: 300px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-size: 18px;
+            color: aqua;
+        }
+
+        input, select {
+            width: 100%;
+            margin-top: 5px;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        .radio-group {
+            margin-top: 5px;
+        }
+
+        .radio-group label {
+            margin-right: 20px;
+            display: inline-block;
+            font-size: 16px;
+            color: aqua;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049 ; 
+        }
+    </style>
+</head>
+<body>
+    <form action="#" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="ad">Ad:</label>
+        <input type="text" id="ad" name="ad" required>
+
+        <label for="soyad">Soyad:</label>
+        <input type="text" id="soyad" name="soyad" required>
+
+        <label for="dogumTarihi">Doğum Tarihi:</label>
+        <input type="date" id="dogumTarihi" name="dogumTarihi" required>
+
+        <label>Cinsiyet:</label>
+        <div class="radio-group">
+            <input type="radio" id="erkek" name="cinsiyet" value="erkek" required>
+            <label for="erkek">Erkek</label>
+            
+            <input type="radio" id="kadin" name="cinsiyet" value="kadin" required>
+            <label for="kadin">Kadın</label>
+        </div>
+
+        <label for="email">E-posta Adresi:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="sifre">Şifre:</label>
+        <input type="password" id="sifre" name="sifre" required>
+
+        <label for="telefon">Telefon Numarası:</label>
+        <input type="tel" id="telefon" name="telefon" required>
+
+        <label for="profilFoto">Profil Fotoğrafı:</label>
+        <input type="file" id="profilFoto" name="profilFoto">
+
+        <button type="submit">Kaydol</button>
+    </form>
+</body>
+</html>

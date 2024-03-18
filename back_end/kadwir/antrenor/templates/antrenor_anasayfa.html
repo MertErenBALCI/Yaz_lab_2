@@ -1,0 +1,1104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antrenör Profili</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{% static 'styles/genericButon.css' %}">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+
+        .container {
+            display: flex; /* Use flexbox */
+        }
+
+        .box {
+            flex: 1;
+            border: 1px solid #ccc; /* Optional: Border for visualization */
+            box-sizing: border-box; /* Include border in the width */
+            padding: 20px; /* Optional: Add padding for spacing */
+        }
+
+        .box1 {
+            width: 150px;
+            border: 1px solid #ccc; /* Optional: Border for visualization */
+            box-sizing: border-box; /* Include border in the width */
+            padding: 20px; /* Optional: Add padding for spacing */
+        }
+
+        #profile {
+            text-align: center;
+        }
+
+        #profile img {
+            width: 150px; /* Örnek bir genişlik */
+            height: 150px; /* Örnek bir yükseklik */
+            border-radius: 75%; /* Yuvarlak profil fotoğrafı */
+            object-fit: cover; /* Fotoğrafın tamamen kaplamasını sağlar */
+        }
+
+        #menu {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+        }
+
+        #menu a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        #menu a:hover {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            padding: 10px;
+            text-align: center;
+            background-color: #fff;
+            max-width: 200px; /* Örnek bir maksimum genişlik */
+        }
+
+        .card img {
+            width: 100%;
+            border-radius: 50%; /* Yuvarlak profil fotoğrafı */
+            object-fit: cover;
+        }
+
+        #cardDiv {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap; /* Yeterli yer yoksa alt satıra geç */
+        }
+
+        #bilgiler {
+            flex: 1;
+            justify-content: center;
+        }
+
+        #bilgiDuzenleButon {
+            margin-top: 20px;
+        }
+
+        .buton {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .buton:hover {
+            background-color: #333;
+            color: #fff;
+        }
+
+        #bilgiFormContainer {
+            text-align: center;
+            display: none; /* Başlangıçta formu gizle */
+        }
+
+        #bilgiForm {
+            display: inline-block;
+            text-align: left;
+        }
+
+        #bilgiForm input {
+            margin-bottom: 10px;
+            padding: 8px;
+            width: 100%;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto; 
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Styling for the content within the overlay */
+        .overlay-content {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 65%;
+            max-height: 80vh; /* Set the maximum height for the content */
+            overflow-y: auto;
+        }
+
+        /* Styling for the close button */
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+
+        nav {
+            background-color: #666;
+            padding: 1em;
+            text-align: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #fff;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 5px;
+            background-color: #444;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="cikis" onclick="cikisYap()">Çıkış</div>
+
+    <script>
+        function cikisYap() {
+        var cikisurl = "{% url 'cikis' %}"
+        window.location.href = cikisurl
+        }
+    </script>
+
+<div id="profile">
+</div>
+
+<div id="menu">
+    
+    <a id="profilMenu" href="#" onclick="showContent('bilgiler')">Profil</a>
+    <a id="danisanMenu" href="#" onclick="showContent('danismanlar')">Danışanlar</a>
+    <a id="mesajMenu" href="#" onclick="showContent('mesajlar')">Mesajlar</a>
+</div>
+
+
+<div id="bilgiler" style="display: none">
+
+    <div id="isim" class="card">
+        
+    </div>
+
+    <div id="cardDiv">
+        
+        <div id="uzmanlik" class="card">
+
+        </div>
+
+        <div id="deneyim" class="card">
+            
+        </div>
+
+        <div id="iletisim" class="card">
+            
+        </div>
+    </div>
+
+    
+
+    <div id="bilgiForm" style="text-align: center;" style="justify-content: center;">
+        <div>
+            <button id="bilgiDuzenleButon" style="text-align: center" class="buton" onclick="openBilgiForm()">Bilgileri Düzenle</button>
+            <div id="bilgiFormContainer">
+                <form id="bilgiGuncelleFrom" method="post" action="{% url 'antrenor_anasayfa' %}" onsubmit="return bilgiGuncelle()">
+                    {% csrf_token %}
+                    <div>  
+                        <input type="text" placeholder="{{ antrenor.ad }}" id="adInput" value="{{ antrenor.ad }}">
+                    </div>
+                    <div>  
+                        <input type="text" placeholder="{{ antrenor.soyad }}" id="soyadInput" value="{{ antrenor.soyad }}">
+                    </div>
+                    <div>  
+                        <input type="email" placeholder="{{ antrenor.email }}" id="emailInput" value="{{ antrenor.email }}">
+                    </div>
+                    <div>  
+                        <input type="tel" placeholder="{{ antrenor.telefon }}" id="telefonInput" value="{{ antrenor.telefon }}">
+                    </div>
+                    <div>  
+                        <input type="text" placeholder="{{ antrenor.uzmanlik }}" id="uzmanlikInput" value="{{ antrenor.uzmanlik }}">
+                    </div>
+                    <div>  
+                        <input type="text" placeholder="{{ antrenor.deneyim }}" id="deneyimInput" value="{{ antrenor.deneyim }}">
+                    </div>
+                    <div>  
+                        <input type="file" placeholder="Profil Fotoğrafı" id="resimInput">
+                    </div>
+                    
+                    <button type="button" onclick="submitForm()">Kaydet</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="danismanlar" style="display: none;"> 
+
+
+    <h2>Danışanlar</h2>
+    <div class="container">
+        <div id="danismanlarSegment">
+
+
+        </div>
+    </div>
+
+    <!-- The overlay -->
+    <div class="overlay" id="danisanGoster">
+        <div class="overlay-content" id="danisanGosterIcerik">
+            <span class="close-button" onclick="closeOverlay()">&#10006;</span>
+    
+            <div>
+                <section id="danismanAd">
+
+                </section>
+                <nav>
+                    <a id="danismanBilgiMenu" href="#danismanBilgi" onclick="showContent('danismanBilgi')">Danışan Bilgisi</a>
+                    <a id="danismanEgzersizMenu" href="#danismanEgzersiz" onclick="showContent('danismanEgzersiz')">Danışan Egzersiz</a>
+                    <a id="danismanVeriMenu" href="#danismanVeri" onclick="showContent('danismanVeri')">Danışan Veri</a>
+                </nav>
+            
+                <section id="danismanBilgi" style="display: none;">
+
+                </section>
+            
+                <div id="danismanEgzersiz" style="display: none;">
+
+                    <div id="danismanEgzersizListesi">
+                        
+                    </div>
+                    
+                    <button class="buton" id="egzersizEkleButon" style="justify-self: center;" onclick="showContent('egzersizEklemeSegment')">Egzersiz Ekle</button>
+                        
+                    <div id="egzersizEklemeSegment" class="box" style="display: none; text-align: center; justify-content: center;">
+                        
+                        <form id="egzersizEkleForm" method="post" onsubmit="return egzersizEkle()">
+                            {% csrf_token %}
+                            <br>
+                            <label for="egzersizAdi">Egzersiz Adı:</label>
+                            <input type="text" id="egzersizAdi" name="egzersiz_adi" required>
+                            <br>
+
+                            <label for="hedef">Hedef:</label>
+                            <input type="text" id="hedef" name="hedef" required>
+                            <br>
+
+                            <label for="tekrar">Tekrar:</label>
+                            <input type="text" id="tekrar" name="tekrar" required>
+                            <br>
+
+                            <label for="video">Video ID:</label>
+                            <input type="text" id="video" name="video" required>
+                            <br>
+
+                            <label for="sure">Sure:</label>
+                            <input type="text" id="sure" name="sure" required>
+                            <br>
+
+                            <label for="tarih">Tarih:</label>
+                            <input type="text" id="tarih" name="tarih" required>
+                            <br>
+
+                            <button class="buton" type="button" onclick="egzersizEkle()">Ekle</button>
+                        </form>
+                    </div>
+                    
+                </div>
+                    
+                <div id="danismanVeri" style="display: none;">
+
+                    <div id="danismanVeriSegment">
+                        <canvas id="kiloGrafik" width="400" height="200" style="text-align: center;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+</div>
+
+<div id="mesajlar" style="display: none">
+
+    <h1>Mesajlar</h1>
+
+    <button id="mesajYazButon" class="buton" onclick="openMessageForm()" style="text-align: center">Yeni Mesaj Yaz</button>
+    <div id="mesajFormContainer" class="container" style="display: none">
+        <h2>Mesaj Yaz</h2>
+
+        <div id="mesajFormSegment" style="text-align: left">
+
+            <form id="messageForm" method="post" onsubmit="return mesajGonder()" style="text-align: left">
+            {% csrf_token %}
+            <label for="messageText">Mesaj:</label>
+            <input type="text" id="messageText" name="messageText" style="width: 300px; height: 100px;">
+            <br>
+            <label for="messageAlici">Alıcı: </label>
+            <input type="text" id="messageAlici" name="messageAlici">
+            <br>
+            <input type="submit" class="buton" value="Gönder">
+            </form>
+        </div>
+    </div>
+
+        <h2>Gönderilen Mesajlar</h2>
+        <ul id="gonderilenMesajListesi"></ul>
+
+        <h2>Alınan Mesajlar</h2>
+        <ul id="alinanMesajListesi"></ul>
+
+    </div>
+
+<script>
+    
+    document.getElementById("danismanEgzersizMenu").addEventListener('click', antrenorEgzersizAl);
+    function antrenorEgzersizResetClick() {
+        
+        document.getElementById("danismanEgzersizMenu").addEventListener('click', antrenorEgzersizAl);
+        document.getElementById("danismanEgzersizMenu").removeEventListener('click', antrenorEgzersizResetClick);
+    }
+
+    var egzersizListesiAll = null;
+    var secilenEgzersiz = null;
+
+    function antrenorEgzersizAl() {
+
+        document.getElementById("danismanEgzersizMenu").removeEventListener('click', antrenorEgzersizAl);
+        document.getElementById("danismanEgzersizMenu").addEventListener('click', antrenorEgzersizResetClick);
+
+        var dataToSend = {
+            egzersizEmail: seciliDanisan.email
+        }
+        
+        fetch("{% url 'antrenorEgzersizAl' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}', // Include the CSRF token if needed
+        },
+        body: JSON.stringify(dataToSend),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            var egzersizListesi = document.getElementById("danismanEgzersizListesi");
+            egzersizListesi.innerHTML = ``;
+                
+            veri = JSON.stringify(data)
+            veri = JSON.parse(veri)
+            veri = JSON.parse(veri)
+            console.log(veri);
+            // Process the received data as needed
+
+            var egzersizVeri = veri
+            egzersizListesiAll = egzersizVeri;
+
+            var index = 0;
+            egzersizVeri.forEach(egzersiz => {
+                var listItem = document.createElement('li');
+
+                var tarih = new Date(egzersiz.tarih)
+                tarih = formatDate(tarih)
+
+                listItem.innerHTML = `
+                      <div class='container'>
+                        <div class='box'>
+                          <div class="container">
+                            <div id="ff" class="box1">Egzersiz Adı:</div>
+                            <div class="box">${egzersiz.egzersiz_adi}</div>
+                          </div>
+                          <br>
+                          <div class="container">
+                            <div id="ff" class="box1">Hedef:</div>
+                            <div class="box">${egzersiz.hedef}</div>
+                          </div>
+                          <br>
+                          <div class="container">
+                            <div id="ff" class="box1">Tekrar:</div>
+                            <div class="box">${egzersiz.tekrar}</div>
+                          </div>
+                          <br>
+                          <div class="container">
+                            <div id="ff" class="box1">Süre:</div>
+                            <div class="box">${egzersiz.sure}</div>
+                          </div>
+                          <br>
+                          <div class="container">
+                            <div id="ff" class="box1">Tarih:</div>
+                            <div class="box">${tarih}</div>
+                          </div>
+                          <br>
+                        </div>
+                        <div class="box">
+                          <iframe id=${egzersiz.email + String(index)} width="426" height="320" src="https://www.youtube.com/embed/${egzersiz.video}" frameborder="0" allowfullscreen></iframe>
+                          <button class="buton" id="${index++}" onclick="egzersizKaldir(this)">Egzersizi Kaldır</button>
+                        </div>
+                        
+                      </div>
+                      `;
+            egzersizListesi.appendChild(listItem);
+        });
+ 
+
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+        }
+
+</script>
+
+<script>
+    
+    document.getElementById("danismanVeriMenu").addEventListener('click', antrenorVeriAl);
+    function antrenorVeriResetClick() {
+        
+        document.getElementById("danismanVeriMenu").addEventListener('click', antrenorVeriAl);
+        document.getElementById("danismanVeriMenu").removeEventListener('click', antrenorVeriResetClick);
+    }
+
+    function antrenorVeriAl() {
+
+        document.getElementById("danismanVeriMenu").removeEventListener('click', antrenorVeriAl);
+        document.getElementById("danismanVeriMenu").addEventListener('click', antrenorVeriResetClick);
+
+        var dataToSend = {
+            egzersizEmail: seciliDanisan.email
+        }
+        
+        fetch("{% url 'antrenorVeriAl' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}', // Include the CSRF token if needed
+        },
+        body: JSON.stringify(dataToSend),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            var gecmisVeriListesi = document.getElementById("danismanVeriSegment");
+            gecmisVeriListesi.innerHTML = ``;
+            
+            var chart = document.createElement("canvas")
+            chart.id = "kiloGrafik"
+            chart.width = 150
+            chart.height = 86
+            gecmisVeriListesi.appendChild(chart)
+                
+            veri = JSON.stringify(data)
+            veri = JSON.parse(veri)
+            veri = JSON.parse(veri)
+            console.log(veri);
+            // Process the received data as needed
+
+            const gecmisVeri = veri
+
+
+        kiloVeri = []
+        tarihVeri = []
+        boyVeri = []
+        kitleIndeksiVeri = []
+        yagOraniVeri = []
+        kasKutlesiVeri = []
+        
+
+
+        gecmisVeri.forEach(veri1 => {
+          var listItem = document.createElement('li');
+          var tarih = new Date(veri1.tarih)
+          tarih = formatDate(tarih)
+          
+          kiloVeri.push(veri1.kilo)
+          boyVeri.push(veri1.boy)
+          kitleIndeksiVeri.push(veri1.vucut_kitle_indeksi)
+          yagOraniVeri.push(veri1.vucut_yag_orani)
+          kasKutlesiVeri.push(veri1.kas_kutlesi)
+          
+          tarihVeri.push(tarih)
+
+          listItem.innerHTML = `
+                      <div>
+                        <p>Kilo:${veri1.kilo}
+                           Boy: ${veri1.boy}
+                           Vücut Kitle İndeksi: ${veri1.vucut_kitle_indeksi}
+                           Vücut Yağ Oranı: ${veri1.vucut_yag_orani}
+                           Kas Kütlesi: ${veri1.kas_kutlesi}
+                           Tarih: ${tarih}</p>
+                      </div>
+                      `;
+          gecmisVeriListesi.appendChild(listItem);
+        });
+        
+        updateLineChart("kiloGrafik", tarihVeri, kiloVeri, boyVeri, kitleIndeksiVeri, yagOraniVeri, kasKutlesiVeri)
+      })
+      .catch(error => console.error('Veri alınamadı:', error));
+    }
+
+      function updateLineChart(id, tarihListesi, kiloListesi, boyListesi, vucutKitleIndeksListesi, vucutYagOranListesi, kasKutlesiListesi) {
+        // Çizgi grafiği için canvas elementini seç
+        var ctx = document.getElementById(id).getContext('2d');
+
+        // Çizgi grafiği oluştur
+        var myChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: kiloListesi.map((_, index) => tarihListesi[index]), // Etiketleri güncelle
+            datasets: [{
+              label: 'Kilo',
+              data: kiloListesi,
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1,
+              fill: false,
+            },
+            {
+              label: 'Boy',
+              data: boyListesi,
+              borderColor: 'rgba(0, 0, 0, 1)',
+              borderWidth: 1,
+              fill: false,
+            },
+
+            {
+              label: 'Vücut Kitle İndeksi',
+              data: vucutKitleIndeksListesi,
+              borderColor: 'rgba(31, 31, 180, 1)',
+              borderWidth: 1,
+              fill: false,
+            },
+
+            {
+              label: 'Vücut Yağ Oranı',
+              data: vucutYagOranListesi,
+              borderColor: 'rgba(180, 31, 31, 1)',
+              borderWidth: 1,
+              fill: false,
+            },
+
+            {
+              label: 'Kas Kütlesi',
+              data: kasKutlesiListesi,
+              borderColor: 'rgba(31, 180, 31, 1)',
+              borderWidth: 1,
+              fill: false,
+            }
+          
+          ]
+          },
+          options: {
+          scales: {
+            y: {
+              beginAtZero: true // Y eksenini 0'dan başlat
+            }
+          }
+        }
+        });
+      }
+
+</script>
+
+<script>
+
+    function egzersizKaldir(part) {
+        var idToDel = part.id
+        var indexOf = parseInt(idToDel, 10)
+
+        var silinecekAd = egzersizListesiAll[indexOf].egzersiz_adi
+        var silinecekEmail = seciliDanisan.email
+
+        fetch('{% url "antrenorEgzersizKaldir" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}',
+        },
+        body: JSON.stringify({
+            ad: silinecekAd,
+            email: silinecekEmail
+        })
+      })
+
+    }
+
+
+    function egzersizEkle() {
+        var emailSent = seciliDanisan.email;
+        var egzersizAdiInput = document.getElementById('egzersizAdi').value;
+        var hedefInput = document.getElementById('hedef').value;
+        var tekrarInput = document.getElementById('tekrar').value;
+        var videoInput = document.getElementById('video').value;
+        var sureInput = document.getElementById('sure').value;
+        var tarihInput = document.getElementById('tarih').value;
+    
+      // AJAX ile Django view fonksiyonunu çağır
+      fetch('{% url "egzersizEkle" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}',
+        },
+        body: JSON.stringify({
+            email: emailSent,
+            egzersiz_adi: egzersizAdiInput,
+            hedef: hedefInput,
+            tekrar: tekrarInput,
+            video: videoInput,
+            sure: sureInput,
+            tarih: tarihInput
+        })
+      })
+
+      return false;
+    }
+</script>
+
+<script>
+    function danismanResetClick() {
+      document.getElementById('danisanMenu').addEventListener('click', danismanAl);
+      document.getElementById('danisanMenu').removeEventListener('click', danismanResetClick)
+    }
+
+    function openOverlay() {
+        document.getElementById('danisanGoster').style.display = 'flex';
+    }
+
+    function closeOverlay() {
+        document.getElementById('danisanGoster').style.display = 'none';
+    }
+
+    function danismanTiklama(event) {
+        var clickedElementId = event.target.id;
+        var a = clickedElementId.substring(1)
+        a = parseInt(a)
+        seciliDanisan = danisanlarAll[a][0]
+        bilgiAl()
+        openOverlay()
+    }
+
+    function bilgiAl() {
+        
+        if(seciliDanisan.cinsiyet == "kadin") {
+            document.getElementById("danisanGosterIcerik").style.backgroundColor = "#ffcbdb"
+        }
+        else {
+            document.getElementById("danisanGosterIcerik").style.backgroundColor = "#e0ffff"    
+        }
+
+        document.getElementById("danismanAd").innerHTML = `
+                        <div style="display: flex">
+                            <h2>${seciliDanisan.ad} ${seciliDanisan.soyad}</h2>
+                            <img src="${seciliDanisan.profil_foto}" alt="Profil Fotoğrafı" style="width: 64px; height: 64px;">
+                        </div>
+                    `;
+
+        document.getElementById("danismanBilgi").innerHTML = `
+                        <div class="container" style="display: flex">
+                            <h2>${seciliDanisan.ad} ${seciliDanisan.soyad}</h2>
+                            <img src="${seciliDanisan.profil_foto}" alt="Profil Fotoğrafı" style="width: 64px; height: 64px;">
+                        </div>
+                        <div class="container" style="display: block">
+                            <div>
+                                <h3>İletişim</h3>
+                                <p>${seciliDanisan.email}</p>
+                                <p>${seciliDanisan.telefon}</p>
+                            </div>
+                            <div>
+                                <h3>Doğum Tarihi</h3>
+                                <p>${seciliDanisan.dogum_tarihi}</p>
+                            </div>
+                        </div>
+        
+        `;
+    }
+
+    function danismanAl() {
+      // AJAX ile Django view fonksiyonunu çağır
+        
+      document.getElementById('danisanMenu').removeEventListener('click', danismanAl)
+      document.getElementById('danisanMenu').addEventListener('click', danismanResetClick);
+      
+      fetch('{% url "danismanAl" %}')  // /get_people/ endpoint'inizi uygun şekilde güncelleyin
+        .then(response => response.json())
+        .then(data => {
+          // Verileri alındıktan sonra HTML'e ekle
+          var danisanListesi = document.getElementById('danismanlarSegment');
+          danisanListesi.innerHTML = '';  // Mevcut içeriği temizle
+
+          veri = JSON.stringify(data)
+          veri = JSON.parse(veri)
+          veri = JSON.parse(veri)
+
+          var danisanlar = veri
+          danisanlarAll = veri
+          var index = 0
+          danisanlar.forEach(danisan => {
+            var listItem = document.createElement('div');
+
+            var danisan1 = danisan[0]
+
+            listItem.innerHTML = `
+                        <div class="container">
+                            <div id="d${index}" class="card" name="danismanCard">
+                                <img id="d${index}" src="${danisan1.profil_foto}" alt="Profil Fotoğrafı">
+                                <div id="d${index}" class="box1">${danisan1.ad} ${danisan1.soyad}</div>
+                                <div id="d${index}" class="box1">${danisan1.email}</div>
+                                <div id="d${index}" class="box1">${danisan1.telefon}</div>
+                                <div id="d${index++}" class="box1">${danisan1.cinsiyet}</div>
+                                <br>
+                            </div>
+                        </div>
+                        `;
+            listItem.addEventListener('click', danismanTiklama)
+            danisanListesi.appendChild(listItem);
+          });
+          
+        })
+        .catch(error => console.error('Veri alınamadı:', error));
+
+    }
+    
+    
+    var danisanlarAll = null;
+    var seciliDanisan = null;
+    
+
+    document.getElementById('danisanMenu').addEventListener('click', danismanAl);
+
+
+</script>
+
+
+<script>
+    function formatDate(date) {
+      return String(date.getHours() + ":" + date.getMinutes() + " " + date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear())
+    }
+
+    function showContent(id) {
+        part = document.getElementById(id)
+
+        if(part.style.display == "none") {
+            part.style.display = "block";
+        }
+        else {
+            part.style.display = "none"
+        }
+
+    }
+
+    function submitForm() {
+        bilgiGuncelle()
+
+    }
+
+
+</script>
+
+<script>
+
+    antrenor = {
+        ad: "{{ antrenor.ad }}",
+        soyad: "{{ antrenor.soyad }}",
+        email: "{{ antrenor.email }}",
+        profil_foto: "{{ antrenor.profil_foto }}",
+        telefon: "{{ antrenor.telefon }}",
+        uzmanlik: "{{ antrenor.uzmanlik }}",
+        deneyim: "{{ antrenor.deneyim }}",
+    }
+
+    document.getElementById("profile").innerHTML = `
+            <img src="${antrenor.profil_foto}" alt="Profil Fotoğrafı">
+            
+            <h2>${antrenor.ad} ${antrenor.soyad}</h2>
+        `;
+
+    document.getElementById("isim").innerHTML = `
+    
+            <img src="${antrenor.profil_foto}" alt="Profil Fotoğrafı">
+            <br>
+            <h3>Antrenör</h3>
+            <h1>${antrenor.ad} ${antrenor.soyad}</h1>
+    
+    `;
+
+    document.getElementById("uzmanlik").innerHTML = `
+     
+            <h2> Uzmanlık </h2>
+            <br>
+            <h3> ${antrenor.uzmanlik} </h3>
+    
+    `;
+
+    document.getElementById("deneyim").innerHTML = `
+    
+            <h1> Deneyim </h1>
+            <br>
+            <h3> ${antrenor.deneyim} </h3>
+    
+    `;
+
+    document.getElementById("iletisim").innerHTML = `
+    
+            <h2>E-Posta</h2>
+            <h3>${antrenor.email}</h3>
+            <h2>Telefon</h2>
+            <h3>${antrenor.telefon}</h3>
+    `;
+
+</script>
+
+
+<script>
+    function openBilgiForm() {
+        showContent("bilgiFormContainer");
+    }
+
+
+</script>
+
+<script>
+
+
+function bilgiGuncelle() {
+      var adInput = document.getElementById("adInput");
+      var soyadInput = document.getElementById("soyadInput");
+      var emailInput = document.getElementById("emailInput");
+      var telefonInput = document.getElementById("telefonInput");
+      var deneyimInput = document.getElementById("deneyimInput");
+      var uzmanlikInput = document.getElementById("uzmanlikInput");
+      var profilePhotoInput = document.getElementById('resimInput');
+      var selectedFile = profilePhotoInput.files[0];
+
+      var bodySent = {
+        ad: adInput.value,
+        soyad: soyadInput.value,
+        email: emailInput.value,
+        telefon: telefonInput.value,
+        deneyim: deneyimInput.value,
+        uzmanlik: uzmanlikInput.value,
+        profil_foto: antrenor.profil_foto
+      }
+      
+
+      if (selectedFile) {
+        convertToBase64(selectedFile, function (base64Image) {
+          // Kullanıcı nesnesini base64 görüntü ile güncelle
+          bodySent.profil_foto = base64Image;
+            
+              
+          // Güncellenen kullanıcı verilerini MongoDB'ye kaydet (bunun için bir backend endpoint'e ihtiyacınız vardır)
+          saveUserDataToMongoDB(bodySent);
+            
+
+            // Sayfayı yeniden yükle
+          location.reload();
+        });
+    
+      }
+
+      else {
+        saveWithoutProfilePic(bodySent);
+      }
+
+      return false; // Formun normal submit işlemini engelle
+    }
+
+    function convertToBase64(file, callback) {
+      var reader = new FileReader();
+      reader.onloadend = function () {
+        callback(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+
+// Güncellenen kullanıcı verilerini MongoDB'ye kaydet (bunun için bir backend endpoint'e ihtiyacınız vardır)
+    function saveUserDataToMongoDB(user) {
+      fetch('{% url "antrenorBilgiGuncelle" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}',
+        },
+        body: JSON.stringify({
+            ad: user.ad,
+            soyad: user.soyad,
+            email: user.email,
+            telefon: user.telefon,
+            deneyim: user.deneyim,
+            uzmanlik: user.uzmanlik,
+            profil_foto: user.profil_foto
+        }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Gerekirse yanıtı ele al
+      })
+      .catch(error => console.error('Kullanıcı verileri güncellenirken hata oluştu:', error));
+    }
+
+    function saveWithoutProfilePic(user) {
+        
+      fetch('{% url "antrenorBilgiGuncelle" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}',
+        },
+        body: JSON.stringify({
+            ad: user.ad,
+            soyad: user.soyad,
+            email: user.email,
+            telefon: user.telefon,
+            deneyim: user.deneyim,
+            uzmanlik: user.uzmanlik,
+            profil_foto: antrenor.profil_foto
+        }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Gerekirse yanıtı ele al
+      })
+      .catch(error => console.error('Kullanıcı verileri güncellenirken hata oluştu:', error));
+    }
+
+
+</script>
+
+<script>
+
+    function openMessageForm() {
+        console.log("31")
+      showContent("mesajFormContainer");
+    }
+
+
+    function mesajGonder() {
+      var mesajInput = document.getElementById("messageText");
+      var mesajAliciInput = document.getElementById("messageAlici");
+
+
+      fetch('{% url "antrenorMesajYaz" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}',
+        },
+        body: JSON.stringify({
+          mesajText: mesajInput.value,
+          mesajAlici: mesajAliciInput.value
+        })
+      })
+
+      return false;
+    }
+
+    function mesajResetClick() {
+      document.getElementById('mesajMenu').addEventListener('click', antrenorMesajAl);
+      document.getElementById('mesajMenu').removeEventListener('click', mesajResetClick)
+    }
+
+
+    function antrenorMesajAl() {
+      // AJAX ile Django view fonksiyonunu çağır
+
+        
+      document.getElementById('mesajMenu').removeEventListener('click', antrenorMesajAl)
+      document.getElementById('mesajMenu').addEventListener('click', mesajResetClick);
+
+      fetch('{% url "antrenorMesajAl" %}')  // /get_people/ endpoint'inizi uygun şekilde güncelleyin
+        .then(response => response.json())
+        .then(data => {
+          // Verileri alındıktan sonra HTML'e ekle
+          var gonderilenMesajListesi = document.getElementById('gonderilenMesajListesi');
+          var alinanMesajListesi = document.getElementById('alinanMesajListesi');
+          gonderilenMesajListesi.innerHTML = '';  // Mevcut içeriği temizle
+          alinanMesajListesi.innerHTML = '';  // Mevcut içeriği temizle
+
+          veri = JSON.stringify(data)
+          veri = JSON.parse(veri)
+          veri = JSON.parse(veri)
+
+          const alinanMesajlar = veri.alinanMesajlar
+          const gonderilenMesajlar = veri.gonderilenMesajlar
+
+
+          alinanMesajlar.forEach(mesaj => {
+            var listItem = document.createElement('li');
+
+            var tarih = new Date(mesaj.tarih)
+            tarih = formatDate(tarih)
+
+            listItem.innerHTML = `
+                        <div class="container">
+                          <div class="box">Gönderen: ${mesaj.gondericiAdi} ${mesaj.gondericiSoyadi}</div>
+                          <div class="box">${mesaj.gonderici}</div>
+                          <div class="box">Mesaj: ${mesaj.mesaj}</div>
+                          <div class="box">Tarih: ${tarih}</div>
+                          <br>
+                        </div>
+                        `;
+            alinanMesajListesi.appendChild(listItem);
+          });
+          gonderilenMesajlar.forEach(mesaj => {
+            var listItem = document.createElement('li');
+
+            var tarih = new Date(mesaj.tarih)
+            tarih = formatDate(tarih)
+            listItem.innerHTML = `
+                        <div class="container">
+                          <div class="box">Alıcı:${mesaj.alici}</div>
+                          <div class="box">Mesaj: ${mesaj.mesaj}</div>
+                          <div class="box">Tarih: ${tarih}</div>
+                          <br>
+                        </div>
+                        `;
+
+            gonderilenMesajListesi.appendChild(listItem);
+          });
+        })
+        .catch(error => console.error('Veri alınamadı:', error));
+
+
+    }
+
+
+
+    document.getElementById('mesajMenu').addEventListener('click', antrenorMesajAl);
+  </script>
+
+</body>
+</html>

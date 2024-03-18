@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+    <link rel="stylesheet" href="{% static 'styles/genericButon.css' %}">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+             /* Arka plan resmi ekleyin */
+      background: url("{% static 'img/danisman.jpg' %}") center/cover no-repeat;
+        }
+
+        .button {
+            display: inline-block;
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: rgb(52, 73, 94); /* RGB value for the background color */
+      color: black; /* Set text color to black */
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    
+    <a href="{% url 'oncekiSayfa' %}" class="geriButon">Geri</a>
+
+    <button class="button" onclick="redirectToLoginPage()">Giriş Yap</button>
+    <button class="button" onclick="redirectToSignupPage()">Kaydol</button>
+
+    <script>
+        function redirectToLoginPage() {
+            var url = "{% url 'danisman_giris' %}"
+            console.log(url)
+            window.location.href = url; // Giriş sayfasına yönlendir
+        }
+
+        function redirectToSignupPage() {
+            var url = "{% url 'danisman_kaydol' %}"
+            console.log(url)
+            window.location.href = url; // Kaydol sayfasına yönlendir
+        }
+    </script>
+
+</body>
+</html>
